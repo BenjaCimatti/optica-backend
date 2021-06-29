@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Envios Salientes";
+}
+@section enviosSalientesDataTable
+{
+    <script src="@Url.Content("~/Scripts/jQuery.dataTables.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/enviosSalientes-table.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.print.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
+}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Envios Salientes
+            </h1>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        @Html.DropDownList("ddlTransportistas", (IEnumerable<SelectListItem>)TempData["Transportistas"], "--Transportista--", new { @class = "form-control" })
+        <br />
+        <div id="container">
+            <table id="enviosSalientesDataTable" class="display">
+                <thead>
+                    <tr>
+                        <th>IdEnvio</th>
+                        <th>DescTransportista</th>
+                        <th>DescCLiente</th>
+                        <th>FechaCarga</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
