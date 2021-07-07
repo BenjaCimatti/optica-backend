@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="30208">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="33792">
       <assemblyIdentity name="LogisticaDataAccess" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>wO1Pd4O+7SXhjruTGvcL3Nw2+WUJ40AR/p9vic4ALtI=</dsig:DigestValue>
+        <dsig:DigestValue>fFrme1WlMFv+FyD0UNxCEnA+HNVwCtjsAwR4w1uIdBQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -73,7 +73,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LlQBJqZdT2CIh4IM4pHdxUlEiRa51RqC8/XGZnU5KZs=</dsig:DigestValue>
+        <dsig:DigestValue>Zsuy3kYhIAoRwPGh184NQAv+9bFE7meh9fE9X95FyXw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -101,13 +101,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="SyncroData.exe.config" size="1212">
+  <file name="SyncroData.exe.config" size="1257">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>euUC40Qv6AaPKBipMrwFdkxAdInyaNr7YCCH+Pp6qS0=</dsig:DigestValue>
+      <dsig:DigestValue>ShscpUN39fOjdIEn8RkB2wlzZScAQeKonfrvzoc1V4Y=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

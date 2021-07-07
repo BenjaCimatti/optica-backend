@@ -16,7 +16,7 @@ namespace WebLogistica.Web.Controllers
     [AuthActionFilter]
     public class ClientesTransportistasController : Controller
     {
-			[CustomAuthorize(1)] //Admin
+		[CustomAuthorize(1)] //Admin
 			public ActionResult Listado()
       {
           return View();
@@ -87,36 +87,39 @@ namespace WebLogistica.Web.Controllers
 					JsonRequestBehavior.AllowGet);
         }
 
-      private IList<ClientesTransportistasTable> GetClientesTransportistas()
+			private List<ClientesTransportistasTable> ObtenerClienteTranportistaList()
+			{
+				List<ClientesTransportistasTable> _ClientesTransportistasle = new List<ClientesTransportistasTable>();
+				ApiAccess Api = new ApiAccess();
+
+				UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+				var AllClientesTransportistas = Api.GetClientesTransportistas(Usd.Token);
+
+				_ClientesTransportistasle = AllClientesTransportistas.AsEnumerable().Select(m => new ClientesTransportistasTable()
+				{
+					IdCliente = m.IdCliente,
+					DescCLiente = m.DescCLiente,
+					IdTransportista = m.IdTransportista,
+					DescTransportista = m.DescTransportista
+				}).ToList();
+
+			return _ClientesTransportistasle;
+			}
+
+			private IList<ClientesTransportistasTable> GetClientesTransportistas()
       {
-          List<ClientesTransportistasTable> _ClientesTransportistasle = new List<ClientesTransportistasTable>();
+				List<ClientesTransportistasTable> _ClientesTransportistasle = new List<ClientesTransportistasTable>();
 
-          if (Session["ClientesTransportistsListData"] != null)
-          {
-							_ClientesTransportistasle = (List<ClientesTransportistasTable>)Session["ClientesTransportistsListData"];
-          }
-          else
-          {
-              if (Session["UsuarioSessionData"] != null)
-              {
-								ApiAccess Api = new ApiAccess();
-
-								UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
-								var AllClientesTransportistas = Api.GetClientesTransportistas(Usd.Token);
-
-								_ClientesTransportistasle = AllClientesTransportistas.AsEnumerable().Select(m => new ClientesTransportistasTable()
-								{
-									IdCliente = m.IdCliente,
-									DescCLiente = m.DescCLiente,
-									IdTransportista = m.IdTransportista,
-									DescTransportista = m.DescTransportista
-								}).ToList();
-
-								Session["ClientesTransportistsListData"] = _ClientesTransportistasle;
-							}
-          }
-
-          return _ClientesTransportistasle;
+				if (Session["ClientesTransportistsListData"] != null)
+				{
+						return (List<ClientesTransportistasTable>)Session["ClientesTransportistsListData"];
+				}
+				else
+				{
+						_ClientesTransportistasle = ObtenerClienteTranportistaList();
+						Session["ClientesTransportistsListData"] = _ClientesTransportistasle;
+					return _ClientesTransportistasle;
+				}
       }
 
 			private string IdxOrderIntString(string Id)

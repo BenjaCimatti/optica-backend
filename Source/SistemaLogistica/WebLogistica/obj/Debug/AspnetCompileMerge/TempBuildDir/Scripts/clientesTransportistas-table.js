@@ -8,7 +8,7 @@
         "iDisplayEnd": 25,
         "aLengthMenu": [[25,100,1000], [25,100,1000]],
         "bServerSide": true,
-        "sAjaxSource": "/ClientesTransportistas/AjaxHandler",
+        "sAjaxSource": "/ClientesTransportistas/AjaxHandlerClientesTransportistas",
         "bProcessing": true,
         "bAutoWidth": false,
             "oLanguage": {

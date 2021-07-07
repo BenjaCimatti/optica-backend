@@ -1,0 +1,27 @@
+﻿@model WebLogistica.Models.EnvioEdit
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="ModalLabel">Editar Envio</h3>
+</div>
+<div>
+    @using (Ajax.BeginForm("Edit", "Envios", FormMethod.Post,
+                        new AjaxOptions
+                        {
+                            InsertionMode = InsertionMode.Replace,
+                            HttpMethod = "POST",
+                            UpdateTargetId = "envioUpdate"
+                        }))
+    {
+        @Html.ValidationSummary()
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <label>Envio: @Html.TextAreaFor(m => m.IdEnvio, new { @readonly = "readonly" })</label>
+            @Html.TextAreaFor(m => m.Observaciones, new { rows = 10, cols = 50 })
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-inverse" type="submit">Grabar</button>
+        </div>
+    }
+</div>
+
+

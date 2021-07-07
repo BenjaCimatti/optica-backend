@@ -15,6 +15,7 @@
     <link href="@Url.Content("~/Content/plugins/morris.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/font-awesome-4.1.0/css/font-awesome.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/navbar.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/site.css")" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -27,7 +28,9 @@
     <!-- /#wrapper -->
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("enviosDataTable", false/*required*/)
+    @RenderSection("enviosPendientesDataTable", false/*required*/)
+    @RenderSection("enviosCompletadosDataTable", false/*required*/)
+    @RenderSection("enviosSalientesDataTable", false/*required*/)
     @RenderSection("clientesTransportistasDataTable", false/*required*/)
 
     @RenderSection("scripts", required: false)

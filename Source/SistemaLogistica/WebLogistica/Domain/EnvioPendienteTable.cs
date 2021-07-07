@@ -14,11 +14,8 @@ namespace WebLogistica.Domain
 		public int IdTransportista { get; set; }
 		public string DescTransportista { get; set; }
 		public DateTime? FechaCarga { get; set; }
-		public DateTime? FechaEnvio { get; set; }
 		public int IdEstado { get; set; }
 		public string DescEstado { get; set; }
-		public double? GeoLatitud { get; set; }
-		public double? GeoLongitud { get; set; }
 		public string Observaciones { get; set; }
 	}
 }

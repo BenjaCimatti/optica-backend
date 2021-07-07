@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Envios Completados";
+}
+@section enviosCompletadosDataTable
+{
+    <script src="@Url.Content("~/Scripts/jquery.dataTables.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/bootstrap-dialog.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/bootstrap-dialog.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Content/leaflet.js")"></script>
+    <link href="@Url.Content("~/Content/leaflet.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/enviosCompletados-table.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.print.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
+}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Envios Completados
+            </h1>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div id="modal-container" class="modal fade" tabindex="-1" role="dialog"></div>
+    <div class="row">
+        <div id="container">
+            <table id="enviosCompletadosDataTable" class="display">
+                <thead>
+                    <tr>
+                        <th>IdEnvio</th>
+                        <th>DescEnvio</th>
+                        <th>DescCLiente</th>
+                        <th>DescTransportista</th>
+                        <th>FechaEnvio</th>
+                        <th>FechaCarga</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->

@@ -14,7 +14,7 @@ namespace ApiLogistica.Filters
     public class CustomAuthorizationAttribute : AuthorizationFilterAttribute
 	{
 		public string ClaimType { get; set; }
-		public string ClaimValue { get; set; }
+		public string ClaimValues { get; set; }
 
 		public override Task OnAuthorizationAsync(HttpActionContext actionContext, System.Threading.CancellationToken cancellationToken)
 		{
@@ -30,7 +30,8 @@ namespace ApiLogistica.Filters
 				return Task.FromResult<object>(null);
 			}
 
-			if (!(principal.HasClaim(x => x.Type == ClaimType && x.Value == ClaimValue)))
+			var roles= ClaimValues.Split(',').ToList();
+			if (!(principal.HasClaim(x => x.Type == ClaimType && roles.Contains(x.Value))))
 			{
 				actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized)
 				{

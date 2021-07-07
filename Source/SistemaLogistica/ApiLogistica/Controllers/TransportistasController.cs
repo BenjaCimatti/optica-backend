@@ -21,7 +21,7 @@ namespace SistemaLogistica.Controllers
 		[HttpGet]
 		[Authorize]
 		[ActionName("Get")]
-		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValue = "1")] //Admin
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1")] //Admin
 		[LogAction]
 		public Object Get()
 		{

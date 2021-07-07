@@ -17,7 +17,7 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -159,6 +159,8 @@
     <Compile Include="Controllers\EnviosController.cs" />
     <Compile Include="Controllers\NavbarController.cs" />
     <Compile Include="Domain\ClientesTransportistasTable.cs" />
+    <Compile Include="Domain\EnvioCompletadoTable.cs" />
+    <Compile Include="Models\EnvioOut.cs" />
     <Compile Include="Domain\NavbarData.cs" />
     <Compile Include="Domain\EnvioPendienteTable.cs" />
     <Compile Include="Filters\AuthActionFilter.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\EnvioIn.cs" />
     <Compile Include="Models\UsuarioSessionData.cs" />
     <Compile Include="Models\Grants.cs" />
     <Compile Include="Models\jQueryDataTableParamModel.cs" />
@@ -191,11 +194,19 @@
     <Content Include="Content\Images\edit_icon.png" />
     <Content Include="Content\Images\forward_disabled.jpg" />
     <Content Include="Content\Images\forward_enabled.jpg" />
+    <Content Include="Content\Images\layers-2x.png" />
+    <Content Include="Content\Images\layers.png" />
+    <Content Include="Content\Images\marker-icon-2x.png" />
+    <Content Include="Content\Images\marker-icon.png" />
+    <Content Include="Content\Images\marker-shadow.png" />
     <Content Include="Content\Images\sort_asc.png" />
     <Content Include="Content\Images\sort_asc_disabled.png" />
     <Content Include="Content\Images\sort_both.png" />
     <Content Include="Content\Images\sort_desc.png" />
     <Content Include="Content\Images\sort_desc_disabled.png" />
+    <Content Include="Content\Images\view_icon.png" />
+    <Content Include="Content\leaflet-src.esm.js" />
+    <Content Include="Content\leaflet-src.js" />
     <Content Include="Content\navbar.css" />
     <Content Include="Content\plugins\morris.css" />
     <Content Include="Content\SistemaLogistica.css" />
@@ -244,6 +255,9 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\leaflet-src.esm.js.map" />
+    <Content Include="Content\leaflet-src.js.map" />
+    <Content Include="Content\leaflet.js.map" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\buttons.html5.min.js" />
@@ -251,6 +265,7 @@
     <Content Include="Scripts\buttons.print.min.js" />
     <Content Include="Scripts\clientesTransportistas-table.js" />
     <Content Include="Scripts\dataTables.buttons.min.js" />
+    <Content Include="Scripts\enviosCompletados-table.js" />
     <Content Include="Scripts\enviosSalientes-table.js" />
     <Content Include="Scripts\enviosPendientes-table.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -267,6 +282,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\jszip.min.js" />
+    <Content Include="Content\leaflet.css" />
+    <Content Include="Content\leaflet.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\pdfmake.min.js" />
     <Content Include="Scripts\vfs_fonts.js" />
@@ -289,6 +306,9 @@
     <Content Include="Views\ClientesTransportistas\Listado.cshtml" />
     <Content Include="Scripts\pdfmake.min.js.map" />
     <Content Include="Views\Envios\Salientes.cshtml" />
+    <Content Include="Views\Envios\_EditEnvioPartial.cshtml" />
+    <Content Include="Views\Envios\Completados.cshtml" />
+    <Content Include="Views\Envios\_OutEnvioPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,10 +11,11 @@ namespace WebLogistica.Web.Domain
 		public IEnumerable<Navbar> NavbarItems()
 		{
 			var menu = new List<Navbar>();
-			menu.Add(new Navbar { Id = 1, nameOption = "Nuevo Envio", controller = "Envios", action = "Nuevo", imageClass = "fa fa-fw fa-paper-plane-o", isParent = false, parentId = -1 });
-			menu.Add(new Navbar { Id = 2, nameOption = "Planilla Envios", controller = "Envios", action = "Salientes", imageClass = "fa fa-fw fa-arrow-right", isParent = false, parentId = -1 });
-			menu.Add(new Navbar { Id = 3, nameOption = "Consulta Clientes", controller = "ClientesTransportistas", action = "Listado", imageClass = "fa fa-fw fa-users", isParent = false, parentId = -1 });
-			menu.Add(new Navbar { Id = 4, nameOption = "Seguridad Acceso", controller = "Seguridad", action = "Acceso", imageClass = "fa fa-fw fa-lock", isParent = false, parentId = -1 });
+			menu.Add(new Navbar { Id = 1, nameOption = "Envios Pendientes", controller = "Envios", action = "Pendientes", imageClass = "fa fa-fw fa-paper-plane-o", isParent = false, parentId = -1 });
+			menu.Add(new Navbar { Id = 2, nameOption = "Envios Salientes", controller = "Envios", action = "Salientes", imageClass = "fa fa-fw fa-arrow-right", isParent = false, parentId = -1 });
+			menu.Add(new Navbar { Id = 3, nameOption = "Envios Completados", controller = "Envios", action = "Completados", imageClass = "fa fa-fw fa-arrow-right", isParent = false, parentId = -1 });
+			menu.Add(new Navbar { Id = 4, nameOption = "Consulta Clientes", controller = "ClientesTransportistas", action = "Listado", imageClass = "fa fa-fw fa-users", isParent = false, parentId = -1 });
+			menu.Add(new Navbar { Id = 5, nameOption = "Seguridad Acceso", controller = "Seguridad", action = "Acceso", imageClass = "fa fa-fw fa-lock", isParent = false, parentId = -1 });
 
 			return menu.ToList();
 		}
@@ -34,7 +35,9 @@ namespace WebLogistica.Web.Domain
 			grants.Add(new Grants { rowid = 1, idRol = 1, idMenu = 1, status = true });
 			grants.Add(new Grants { rowid = 2, idRol = 1, idMenu = 2, status = true });
 			grants.Add(new Grants { rowid = 3, idRol = 1, idMenu = 3, status = true });
+			grants.Add(new Grants { rowid = 3, idRol = 3, idMenu = 3, status = true });
 			grants.Add(new Grants { rowid = 4, idRol = 1, idMenu = 4, status = true });
+			grants.Add(new Grants { rowid = 5, idRol = 1, idMenu = 5, status = true });
 
 			return grants.ToList();
 		}

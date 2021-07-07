@@ -41,6 +41,13 @@ namespace WebLogistica.Data
 			public string Observaciones { get; set; }
 		}
 
+		public class NuevoEnvio
+		{
+			public int IdCliente { get; set; }
+			public int IdTransportista { get; set; }
+			public string Observaciones { get; set; }
+		}
+
 		public class ClienteTransportista
 		{
 			public int IdCliente { get; set; }
@@ -73,6 +80,38 @@ namespace WebLogistica.Data
 					{
 						List<Envio> Envios = JsonConvert.DeserializeObject<List<Envio>>(response.Content.ToString());
 						return Envios;
+					}
+					else
+					{
+						return null;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return null;
+			}
+		}
+
+		public Envio GetDetalleEnvio(string Token, int IdEnvio)
+		{
+			Token = SyncroToken(Token);
+
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Envios/Get", Method.GET);
+			request.AddHeader("Authorization", "Bearer " + Token);
+			request.AddParameter("IdEnvio", IdEnvio);
+
+			try
+			{
+				var response = client.Get(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						Envio Envio = JsonConvert.DeserializeObject<Envio>(response.Content.ToString());
+						return Envio;
 					}
 					else
 					{
@@ -268,6 +307,39 @@ namespace WebLogistica.Data
 			try
 			{
 				var response = client.Get(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return false;
+			}
+		}
+
+		public bool IngresarEnvio(string Token, NuevoEnvio Envio)
+		{
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Envios/Ingresar", Method.POST);
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			string jsonToSend = JsonConvert.SerializeObject(new { IdCliente = Envio.IdCliente, IdTransportista = Envio.IdTransportista, Observaciones = Envio.Observaciones });
+
+			request.AddParameter("application/json; charset=utf-8", jsonToSend, ParameterType.RequestBody);
+			request.RequestFormat = DataFormat.Json;
+
+			try
+			{
+				var response = client.Post(request);
 				{
 					if (response.StatusCode == HttpStatusCode.OK)
 					{

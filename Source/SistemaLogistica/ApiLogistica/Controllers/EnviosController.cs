@@ -21,7 +21,7 @@ namespace SistemaLogistica.Controllers
 		[HttpGet]
 		[Authorize]
 		[ActionName("Get")]
-		//[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValue = "1")] //Admin arreglar para Transportistas
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1,2")] //Admin,Transportistas
 		[LogAction]
 		public Object Get(int? Estado = null)
 		{
@@ -85,10 +85,46 @@ namespace SistemaLogistica.Controllers
 				}
 		}
 
+		[HttpGet]
+		[Authorize]
+		[ActionName("Get")]
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1,2")] //Admin,Transportistas
+		[LogAction]
+		public Object GetDetalle(int IdEnvio)
+		{
+			var identity = User.Identity as ClaimsIdentity;
+			Envio res;
+
+			IEnumerable<Claim> claims = identity.Claims;
+
+			int IdOrganizacion = int.Parse(claims.Where(p => p.Type == "IdOrganizacion").FirstOrDefault()?.Value);
+
+			DataAccess dal = new DataAccess();
+			try
+			{
+				res = dal.ObtenerDetalleEnvio(IdEnvio, IdOrganizacion);
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+			}
+
+			if (res.DescCliente != null)
+			{
+				return res;
+			}
+			else
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.NoContent.ToString());
+				throw new HttpResponseException(HttpStatusCode.NoContent);
+			}
+		}
+
 		[HttpPost]
 		[Authorize]
 		[ActionName("Confirmar")]
-		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValue = "2")] //Transportista
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "2")] //Transportista
 		[LogAction]
 		public Object Confirmar(ConfirmacionEnvioRequest Ce)
 		{
@@ -151,10 +187,52 @@ namespace SistemaLogistica.Controllers
 			}
 		}
 
+		[HttpPost]
+		[Authorize]
+		[ActionName("Ingresar")]
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1")] //Admin
+		[LogAction]
+		public Object Ingresar(NuevoEnvioRequest Ne)
+		{
+			if (!ModelState.IsValid)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.BadRequest.ToString() + " - " + ModelState);
+				throw new HttpResponseException(HttpStatusCode.BadRequest);
+			}
+
+			bool res;
+
+			NuevoEnvio DNe = new NuevoEnvio();
+			DNe.IdCliente = Ne.IdCliente;
+			DNe.IdTransportista = Ne.IdTransportista;
+			DNe.Observaciones = Ne.Observaciones;
+
+			DataAccess dal = new DataAccess();
+			try
+			{
+				res = dal.IngresarEnvio(DNe);
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+			}
+
+			if (res)
+			{
+				return Json(new { status = "OK" });
+			}
+			else
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.NoContent.ToString());
+				throw new HttpResponseException(HttpStatusCode.NoContent);
+			}
+		}
+
 		[HttpGet]
 		[Authorize]
 		[ActionName("EliminarDisponible")]
-		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValue = "1")] //Admin
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1")] //Admin
 		[LogAction]
 		public Object Eliminar(int IdEnvio)
 		{

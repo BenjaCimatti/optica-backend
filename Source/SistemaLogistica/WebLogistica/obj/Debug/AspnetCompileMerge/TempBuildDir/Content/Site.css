@@ -22,3 +22,17 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.modal-content {
+    width: 600px;
+    margin: 30px auto;
+}
+
+.map {
+    cursor: default;
+    height: 300px;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 0;
+}

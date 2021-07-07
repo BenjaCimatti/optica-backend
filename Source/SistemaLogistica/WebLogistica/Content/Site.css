@@ -18,7 +18,24 @@
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
-select,
+select {
+    max-width: 360px;
+}
+
 textarea {
-    max-width: 280px;
+    max-width: 480px;
+}
+
+.modal-content {
+    width: 600px;
+    margin: 30px auto;
+}
+
+.map {
+    cursor: default;
+    height: 300px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    z-index: 0;
 }
