@@ -1,0 +1,126 @@
+﻿@model WebLogistica.Models.EnviosHomeData
+@{
+    ViewBag.Title = "Consultas";
+}
+@section enviosSalientesDataTable
+{
+    <script src="@Url.Content("~/Scripts/jQuery.dataTables.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/bootstrap-dialog.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/bootstrap-dialog.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Content/leaflet.js")"></script>
+    <link href="@Url.Content("~/Content/leaflet.css")" rel="stylesheet" type="text/css" />
+
+    <link href="@Url.Content("~/Content/table.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/enviosConsultas-table.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.print.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
+}
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Consultas
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-md-6 hidden-xs">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-comments fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">@Model._Estadisticas.Estadistica1</div>
+                            <div>Nuevos envios ult. 15 dias. </div>
+                        </div>
+                    </div>
+                </div>
+                @*<a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalle</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>*@
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 hidden-xs">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-tasks fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">@Model._Estadisticas.Estadistica2</div>
+                            <div>Promedio dias envios ult. 15 dias.</div>
+                        </div>
+                    </div>
+                </div>
+                @*<a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalle</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>*@
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6 hidden-xs">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-shopping-cart fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">@Model._Estadisticas.Estadistica3</div>
+                            <div>Envios Pendientes!</div>
+                        </div>
+                    </div>
+                </div>
+                @*<a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">Ver Detalle</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>*@
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div id="modal-container" class="modal fade" tabindex="-1" role="dialog"></div>
+    <div class="row">
+        <div id="container">
+            <table id="enviosSalientesDataTable" class="display">
+                <thead>
+                    <tr>
+                        <th>IdEnvio</th>
+                        <th>DescTransportista</th>
+                        <th>DescCLiente</th>
+                        <th>FechaCarga</th>
+                        <th>Observaciones</th>
+                        <th>Contactos</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->

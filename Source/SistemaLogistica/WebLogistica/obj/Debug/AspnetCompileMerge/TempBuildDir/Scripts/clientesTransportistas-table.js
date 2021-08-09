@@ -110,3 +110,9 @@
         ]
     });
 });
+
+function SwitchTransportistas() {
+    var url = "/ClientesTransportistas/SwitchView";
+    $('#modal-container').load(url);
+    $('#modal-container').modal('show');
+}

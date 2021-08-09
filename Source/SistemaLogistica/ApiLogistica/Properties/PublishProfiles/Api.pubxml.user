@@ -79,16 +79,16 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>09/10/2013 16:29:20</publishTime>
     </File>
     <File Include="bin/ApiLogistica.dll">
-      <publishTime>05/07/2021 19:22:46</publishTime>
+      <publishTime>04/08/2021 14:14:29</publishTime>
     </File>
     <File Include="bin/ApiLogistica.pdb">
-      <publishTime>05/07/2021 19:22:50</publishTime>
+      <publishTime>04/08/2021 14:14:29</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>07/05/2021 19:26:55</publishTime>
+      <publishTime>08/04/2021 14:26:33</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>07/05/2021 19:26:55</publishTime>
+      <publishTime>08/04/2021 14:26:33</publishTime>
     </File>
     <File Include="bin/Common.Logging.Core.dll">
       <publishTime>11/14/2015 13:35:30</publishTime>
@@ -136,13 +136,13 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>10/19/2020 06:40:10</publishTime>
     </File>
     <File Include="bin/LogisticaDataAccess.dll">
-      <publishTime>07/04/2021 19:51:56</publishTime>
+      <publishTime>04/08/2021 14:14:17</publishTime>
     </File>
     <File Include="bin/LogisticaDataAccess.dll.config">
       <publishTime>06/03/2021 09:56:02</publishTime>
     </File>
     <File Include="bin/LogisticaDataAccess.pdb">
-      <publishTime>07/04/2021 19:51:56</publishTime>
+      <publishTime>04/08/2021 14:14:17</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
       <publishTime>05/24/2018 13:38:22</publishTime>
@@ -325,10 +325,10 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>05/24/2018 13:38:24</publishTime>
     </File>
     <File Include="bin/Seguridad.dll">
-      <publishTime>07/04/2021 19:51:54</publishTime>
+      <publishTime>04/08/2021 14:14:15</publishTime>
     </File>
     <File Include="bin/Seguridad.pdb">
-      <publishTime>07/04/2021 19:51:54</publishTime>
+      <publishTime>04/08/2021 14:14:15</publishTime>
     </File>
     <File Include="bin/System.Data.SQLite.dll">
       <publishTime>05/30/2020 16:03:50</publishTime>
@@ -370,10 +370,10 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>01/02/2018 12:20:56</publishTime>
     </File>
     <File Include="bin/Utiles.dll">
-      <publishTime>07/03/2021 08:23:04</publishTime>
+      <publishTime>04/08/2021 14:14:15</publishTime>
     </File>
     <File Include="bin/Utiles.pdb">
-      <publishTime>07/03/2021 08:23:04</publishTime>
+      <publishTime>04/08/2021 14:14:15</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>01/23/2014 13:57:34</publishTime>
@@ -424,7 +424,7 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>05/20/2021 14:29:22</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>07/05/2021 19:26:47</publishTime>
+      <publishTime>08/04/2021 14:26:27</publishTime>
     </File>
     <File Include="Scripts/bootstrap.js">
       <publishTime>06/23/2021 20:20:59</publishTime>
@@ -454,7 +454,7 @@ edite el archivo MSBuild. Visite https://go.microsoft.com/fwlink/?LinkID=208121 
       <publishTime>06/23/2021 20:21:03</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/05/2021 19:26:46</publishTime>
+      <publishTime>04/08/2021 14:16:25</publishTime>
     </File>
   </ItemGroup>
 </Project>

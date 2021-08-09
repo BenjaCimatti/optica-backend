@@ -15,15 +15,69 @@ using System.Web.UI;
 
 namespace WebLogistica.Web.Controllers
 {
-    [AuthActionFilter]
+		public class NameValue
+		{
+			public string name { get; set; }
+			public string value { get; set; }
+		}
+
+		[AuthActionFilter]
     public class EnviosController : Controller
     {
 			[CustomAuthorize(1)] //Admin
 			public ActionResult Pendientes()
 			{
+				if (Session["EnviosHomeData"] == null)
+					{
+						EnviosHomeData viewModel = new EnviosHomeData();
+
+						ApiAccess Api = new ApiAccess();
+
+						UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+						WebLogistica.Data.Estadisticas _EstadisticasData = Api.GetEstadisticas(Usd.Token);
+
+						WebLogistica.Models.Estadisticas _EstadisticasModel = new WebLogistica.Models.Estadisticas();
+
+						_EstadisticasModel.Estadistica1 = _EstadisticasData.Estadistica1;
+						_EstadisticasModel.Estadistica2 = _EstadisticasData.Estadistica2;
+						_EstadisticasModel.Estadistica3 = _EstadisticasData.Estadistica3;
+
+						viewModel._Estadisticas = _EstadisticasModel;
+						Session["EnviosHomeData"] = viewModel;
+					}
+				return View((EnviosHomeData)Session["EnviosHomeData"]);
+			}
+
+			[CustomAuthorize(3)] //Clientes
+			public ActionResult Consultas()
+			{
+				if (Session["EnviosHomeData"] == null)
+				{
+					EnviosHomeData viewModel = new EnviosHomeData();
+
+					ApiAccess Api = new ApiAccess();
+
+					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+					WebLogistica.Data.Estadisticas _EstadisticasData = Api.GetEstadisticas(Usd.Token);
+
+					WebLogistica.Models.Estadisticas _EstadisticasModel = new WebLogistica.Models.Estadisticas();
+
+					_EstadisticasModel.Estadistica1 = _EstadisticasData.Estadistica1;
+					_EstadisticasModel.Estadistica2 = _EstadisticasData.Estadistica2;
+					_EstadisticasModel.Estadistica3 = _EstadisticasData.Estadistica3;
+
+					viewModel._Estadisticas = _EstadisticasModel;
+					Session["EnviosHomeData"] = viewModel;
+				}
+				return View((EnviosHomeData)Session["EnviosHomeData"]);
+			}
+
+			[CustomAuthorize(1)] //Admin
+			public ActionResult NuevoEnvioView()
+			{
 				TempData["ClientesDDLId"] = new SelectList(ObtenerClinetesDDLId(), "Value", "Text");
 
-				return View();
+				return PartialView("~/Views/Envios/_NuevoEnvioPartial.cshtml");
 			}
 
 			[CustomAuthorize(1)] //Admin
@@ -166,7 +220,7 @@ namespace WebLogistica.Web.Controllers
 					filteredEnvios = filteredEnvios.OrderByDescending(orderingFunction);
 
 				var displayedEnvios = filteredEnvios.Skip(param.iDisplayStart).Take(param.iDisplayLength);
-				var result = from c in displayedEnvios select new[] { c.IdEnvio.ToString(), c.DescEnvio.ToString(), c.DescCLiente, c.DescTransportista, String.Format(ConfigurationManager.AppSettings["DisplayFormatDate"].ToString(), c.FechaCarga), c.Observaciones };
+				var result = from c in displayedEnvios select new[] { c.IdEnvio.ToString(), c.DescEnvio.ToString(), c.DescCLiente, c.DescTransportista, String.Format(ConfigurationManager.AppSettings["DisplayFormatDate"].ToString(), c.FechaCarga), c.Observaciones, c.IdEnvio.ToString() };
 				return Json(new
 				{
 					sEcho = param.sEcho,
@@ -177,6 +231,7 @@ namespace WebLogistica.Web.Controllers
 				JsonRequestBehavior.AllowGet);
 			}
 
+			[CustomAuthorize(1)] //Admin
 			public ActionResult AjaxHandlerCompletados(jQueryDataTableParamModel param)
 			{
 
@@ -243,7 +298,7 @@ namespace WebLogistica.Web.Controllers
 			JsonRequestBehavior.AllowGet);
 		}
 
-		private IList<EnvioPendienteTable> GetEnviosPendientes()
+			private IList<EnvioPendienteTable> GetEnviosPendientes()
 			{
 				List<EnvioPendienteTable> _Envios = new List<EnvioPendienteTable>();
 
@@ -281,24 +336,18 @@ namespace WebLogistica.Web.Controllers
 				return _Envios;
 			}
 
-			private IList<EnvioCompletadoTable> GetEnviosCompletados()
+			private IList<EnvioPendienteTable> GetEnviosSalientes()
 			{
-			List<EnvioCompletadoTable> _Envios = new List<EnvioCompletadoTable>();
+				List<EnvioPendienteTable> _Envios = new List<EnvioPendienteTable>();
 
-			if (Session["EnviosCompletadosListData"] != null)
-			{
-				_Envios = (List<EnvioCompletadoTable>)Session["EnviosCompletadosListData"];
-			}
-			else
-			{
 				if (Session["UsuarioSessionData"] != null)
 				{
 					ApiAccess Api = new ApiAccess();
 
 					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
-					var AllEnvios = Api.GetEnvios(Usd.Token, int.Parse(ConfigurationManager.AppSettings["IdEstadoConfirmado"].ToString()));
+					var AllEnvios = Api.GetEnvios(Usd.Token, int.Parse(ConfigurationManager.AppSettings["IdEstadoEnviado"].ToString()));
 
-					_Envios = AllEnvios.AsEnumerable().Select(m => new EnvioCompletadoTable()
+					_Envios = AllEnvios.AsEnumerable().Select(m => new EnvioPendienteTable()
 					{
 						IdEnvio = m.IdEnvio,
 						DescEnvio = m.IdEnvio,
@@ -311,14 +360,51 @@ namespace WebLogistica.Web.Controllers
 						FechaCarga = m.FechaCarga,
 						FechaEnvio = m.FechaEnvio,
 						Observaciones = m.Observaciones,
+						Contactos = m.Contactos
 					}).ToList();
-
-					Session["EnviosCompletadosListData"] = _Envios;
 				}
+
+				return _Envios;
 			}
 
-			return _Envios;
-		}
+			private IList<EnvioCompletadoTable> GetEnviosCompletados()
+				{
+				List<EnvioCompletadoTable> _Envios = new List<EnvioCompletadoTable>();
+
+				if (Session["EnviosCompletadosListData"] != null)
+				{
+					_Envios = (List<EnvioCompletadoTable>)Session["EnviosCompletadosListData"];
+				}
+				else
+				{
+					if (Session["UsuarioSessionData"] != null)
+					{
+						ApiAccess Api = new ApiAccess();
+
+						UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+						var AllEnvios = Api.GetEnvios(Usd.Token, int.Parse(ConfigurationManager.AppSettings["IdEstadoCompletado"].ToString()));
+
+						_Envios = AllEnvios.AsEnumerable().Select(m => new EnvioCompletadoTable()
+						{
+							IdEnvio = m.IdEnvio,
+							DescEnvio = m.IdEnvio,
+							IdCliente = m.IdCliente,
+							DescCLiente = m.DescCLiente,
+							IdTransportista = m.IdTransportista,
+							DescTransportista = m.DescTransportista,
+							IdEstado = m.IdEstado,
+							DescEstado = m.DescEstado,
+							FechaCarga = m.FechaCarga,
+							FechaEnvio = m.FechaEnvio,
+							Observaciones = m.Observaciones,
+						}).ToList();
+
+						Session["EnviosCompletadosListData"] = _Envios;
+					}
+				}
+
+				return _Envios;
+			}
 
 			[HttpPost]
 			[CustomAuthorize(1)] //Admin
@@ -381,6 +467,20 @@ namespace WebLogistica.Web.Controllers
 				return RedirectToAction("Pendientes", "Envios");
 			}
 
+			[HttpPost]
+			[CustomAuthorize(1)] //Admin
+			public ActionResult Editar(EnvioEdit Envio)
+			{
+				ApiAccess Api = new ApiAccess();
+
+				UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+				Api.EditarEnvio(Usd.Token, Envio.IdEnvio, Envio.Observaciones);
+
+				ModelState.Clear();
+				Session.Remove("EnviosPendientesListData");
+				return RedirectToAction("Pendientes", "Envios");
+			}
+
 			[CustomAuthorize(1)] //Admin
 			public ActionResult Salientes()
       {
@@ -405,7 +505,7 @@ namespace WebLogistica.Web.Controllers
 			{
 				IEnumerable<EnvioPendienteTable> filteredEnvios;
 
-				var allEnvios = GetEnviosPendientes();
+				var allEnvios = GetEnviosSalientes();
 
 				if (!string.IsNullOrEmpty(param.sSearch))
 				{
@@ -416,7 +516,7 @@ namespace WebLogistica.Web.Controllers
 					filteredEnvios = allEnvios;
 				}
 
-				var result = from c in filteredEnvios select new[] { c.IdEnvio.ToString(), c.DescTransportista, c.DescCLiente, String.Format(ConfigurationManager.AppSettings["DisplayFormatDate"].ToString(), c.FechaCarga), c.Observaciones };
+				var result = from c in filteredEnvios select new[] { c.IdEnvio.ToString(), c.DescTransportista, c.DescCLiente, String.Format(ConfigurationManager.AppSettings["DisplayFormatDate"].ToString(), c.FechaCarga), c.Observaciones, c.Contactos.ToString() };
 
 				return Json(new
 				{
@@ -426,52 +526,162 @@ namespace WebLogistica.Web.Controllers
 					aaData = result
 				},
 				JsonRequestBehavior.AllowGet);
-		}
+			}
+
+			[CustomAuthorize(3)] //Clientes
+			public ActionResult AjaxHandlerConsultas(jQueryDataTableParamModel param)
+			{
+				IEnumerable<EnvioPendienteTable> filteredEnvios;
+
+				var allEnvios = GetEnviosSalientes();
+
+				if (!string.IsNullOrEmpty(param.sSearch))
+				{
+					filteredEnvios = allEnvios.Where(c => c.DescTransportista.ToLower().Contains(param.sSearch.ToLower()));
+				}
+				else
+				{
+					filteredEnvios = allEnvios;
+				}
+
+				var result = from c in filteredEnvios select new[] { c.IdEnvio.ToString(), c.DescTransportista, c.DescCLiente, String.Format(ConfigurationManager.AppSettings["DisplayFormatDate"].ToString(), c.FechaCarga), c.Observaciones, c.Contactos.ToString() };
+
+				return Json(new
+				{
+					sEcho = param.sEcho,
+					iTotalRecords = filteredEnvios.Count(),
+					iTotalDisplayRecords = filteredEnvios.Count(),
+					aaData = result
+				},
+				JsonRequestBehavior.AllowGet);
+			}
 
 			[HttpGet] // this action result returns the partial containing the modal
-			public ActionResult Edit(int id)
+			[CustomAuthorize(1)] //Admin
+			public ActionResult EditarView(int id)
 			{
 				var viewModel = new EnvioEdit();
-				viewModel.IdEnvio = id;
-				viewModel.Observaciones = "Pepe";
+
+				ApiAccess Api = new ApiAccess();
+
+				UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+				InfoEnvio _InfoEnvio = Api.GetDetalleEnvio(Usd.Token, id);
+
+				viewModel.IdEnvio = _InfoEnvio._Envio.IdEnvio;
+				viewModel.Observaciones = _InfoEnvio._Envio.Observaciones;
 				return PartialView("~/Views/Envios/_EditEnvioPartial.cshtml", viewModel);
 			}
 
 			[OutputCache(Duration = 0)]
+			[CustomAuthorize(1)] //Admin
 			public ActionResult Completado(int id)
+			{
+					ApiAccess Api = new ApiAccess();
+
+					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+					InfoEnvio _InfoEnvio = Api.GetDetalleEnvio(Usd.Token, id);
+
+					var viewModel = new EnvioContactosOut();
+					viewModel.IdEnvio = _InfoEnvio._Envio.IdEnvio;
+					viewModel.Observaciones = _InfoEnvio._Envio.Observaciones;
+					viewModel.DescCliente = _InfoEnvio._Envio.DescCLiente;
+					viewModel.DescEstado = _InfoEnvio._Envio.DescEstado;
+					viewModel.DescTransportista = _InfoEnvio._Envio.DescTransportista;
+					viewModel.FechaCarga = _InfoEnvio._Envio.FechaCarga;
+					viewModel.FechaEnvio = _InfoEnvio._Envio.FechaEnvio;
+					viewModel.GeoLatitud = _InfoEnvio._Envio.GeoLatitud.ToString().Replace(",", ".");
+					viewModel.GeoLongitud = _InfoEnvio._Envio.GeoLongitud.ToString().Replace(",", ".");
+					viewModel.CantContactos = _InfoEnvio._Envio.Contactos;
+
+					if (_InfoEnvio._Contactos != null)
+					{
+						if (_InfoEnvio._Contactos.Count > 0)
+						{
+							viewModel.Contactos = new List<WebLogistica.Models.Contacto>();
+							foreach (ApiAccess.Contacto c in _InfoEnvio._Contactos)
+							{
+								viewModel.Contactos.Add(new WebLogistica.Models.Contacto { IdEnvio = c.IdEnvio, IdTransportista = c.IdTransportista, DescTransportista = c.DescTransportista, FechaContacto = c.FechaContacto, GeoLatitud = c.GeoLatitud.ToString().Replace(",", "."), GeoLongitud = c.GeoLongitud.ToString().Replace(",", "."), Observaciones = c.Observaciones });
+							}
+						}
+				}
+
+				return PartialView("~/Views/Envios/_OutEnvioPartial.cshtml", viewModel);
+			}
+
+			[OutputCache(Duration = 0)]
+			[CustomAuthorize(1,3)] //Admin Clientes
+			public ActionResult Contactado(int id)
 			{
 				ApiAccess Api = new ApiAccess();
 
 				UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
-				Envio _Envio = Api.GetDetalleEnvio(Usd.Token,id);
+				InfoEnvio _EnvioSaliente = Api.GetDetalleEnvio(Usd.Token,id);
 
-				var viewModel = new EnvioOut();
-				viewModel.IdEnvio = _Envio.IdEnvio;
-				viewModel.Observaciones = _Envio.Observaciones;
-				viewModel.DescCliente = _Envio.DescCLiente;
-				viewModel.DescEstado = _Envio.DescEstado;
-				viewModel.DescTransportista = _Envio.DescTransportista;
-				viewModel.FechaCarga = _Envio.FechaCarga;
-				viewModel.FechaEnvio = _Envio.FechaEnvio;
-				viewModel.GeoLatitud = _Envio.GeoLatitud.ToString().Replace(",",".");
-				viewModel.GeoLongitud = _Envio.GeoLongitud.ToString().Replace(",", ".");
-				return PartialView("~/Views/Envios/_OutEnvioPartial.cshtml", viewModel);
+				var viewModel = new EnvioContactosOut();
+				viewModel.IdEnvio = _EnvioSaliente._Envio.IdEnvio;
+				viewModel.Observaciones = _EnvioSaliente._Envio.Observaciones;
+				viewModel.DescCliente = _EnvioSaliente._Envio.DescCLiente;
+				viewModel.DescEstado = _EnvioSaliente._Envio.DescEstado;
+				viewModel.DescTransportista = _EnvioSaliente._Envio.DescTransportista;
+				viewModel.FechaCarga = _EnvioSaliente._Envio.FechaCarga;
+				viewModel.FechaEnvio = _EnvioSaliente._Envio.FechaEnvio;
+				viewModel.CantContactos = _EnvioSaliente._Envio.Contactos;
+
+				if (_EnvioSaliente._Contactos != null)
+				{
+					if (_EnvioSaliente._Contactos.Count > 0)
+					{
+						viewModel.Contactos = new List<WebLogistica.Models.Contacto>();
+						foreach (ApiAccess.Contacto c in _EnvioSaliente._Contactos)
+						{
+							viewModel.Contactos.Add(new WebLogistica.Models.Contacto { IdEnvio = c.IdEnvio, IdTransportista = c.IdTransportista, DescTransportista = c.DescTransportista, FechaContacto = c.FechaContacto, GeoLatitud = c.GeoLatitud.ToString().Replace(",", "."), GeoLongitud = c.GeoLongitud.ToString().Replace(",", "."), Observaciones = c.Observaciones });
+						}
+					}
+				}
+
+				return PartialView("~/Views/Envios/_OutEnvioContactosPartial.cshtml", viewModel);
 			}
 
-			[HttpPost] // this action takes the viewModel from the modal
-			public ActionResult Edit(EnvioEdit viewModel)
+			[CustomAuthorize(1)] //Admin
+			public JsonResult Liberar(List<NameValue> jsonInput)
 			{
-				if (ModelState.IsValid)
+				if (jsonInput != null)
 				{
-				//var toUpdate = personRepo.Find(viewModel.Id);
-				//toUpdate.Name = viewModel.Name;
-				//toUpdate.Age = viewModel.Age;
-				//personRepo.InsertOrUpdate(toUpdate);
-				//personRepo.Save();
+				bool res = false;
+
+				List<long> Le = new List<long>();
+				foreach (NameValue Nv in jsonInput)
+				{
+					Le.Add(long.Parse(Nv.value));
 				}
-				ModelState.Clear();
-				Session.Remove("EnviosPendientesListData");
-				return RedirectToAction("Pendientes", "Envios");
+
+				try
+				{
+					ApiAccess Api = new ApiAccess();
+
+					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+					res = Api.EnviarEnviosDisponibles(Usd.Token, Le);
+				}
+				catch
+				{
+					res = false;
+				}
+
+				if (res)
+				{
+					ModelState.Clear();
+					Session.Remove("EnviosPendientesListData");
+					return Json(data: "Liberados", behavior: JsonRequestBehavior.AllowGet);
+				}
+				else
+				{
+					return Json(data: "Error", behavior: JsonRequestBehavior.AllowGet);
+				}
+			}
+				else
+				{
+					return Json(data: "NoData", behavior: JsonRequestBehavior.AllowGet);
+				}
+			}
 		}
-	}
 }

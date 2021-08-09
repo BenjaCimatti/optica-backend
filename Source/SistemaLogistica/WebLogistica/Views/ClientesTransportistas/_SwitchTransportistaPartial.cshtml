@@ -1,0 +1,30 @@
+﻿@model WebLogistica.Models.SwitchTransportista
+@using (Html.BeginForm("Switch", "ClientesTransportistas", FormMethod.Post))
+{
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">Cambiar Transportistas</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>
+                        Transportista Origen @Html.DropDownListFor(m => m.IdTransportistaOrigen, (IEnumerable<SelectListItem>)TempData["TransportistaOrigenDDLId"], new { id = "ddlTranspotistaOrigen", @class = "form-control" })
+                    </label>
+                    <br />
+                    <br />
+                    <label>
+                        Transportista Destino @Html.DropDownListFor(m => m.IdTransportistaDestino, (IEnumerable<SelectListItem>)TempData["TransportistaDestinoDDLId"], new { id = "ddlTranspotistaDEstino", @class = "form-control" })
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Grabar</button>
+            </div>
+        </div>
+    </div>
+}

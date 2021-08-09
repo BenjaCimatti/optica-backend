@@ -6,6 +6,14 @@
     <script src="@Url.Content("~/Scripts/jQuery.dataTables.min.js")"></script>
     <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
 
+    <script src="@Url.Content("~/Scripts/bootstrap-dialog.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/bootstrap-dialog.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Content/leaflet.js")"></script>
+    <link href="@Url.Content("~/Content/leaflet.css")" rel="stylesheet" type="text/css" />
+
+    <link href="@Url.Content("~/Content/table.css")" rel="stylesheet" type="text/css" />
+
     <script src="@Url.Content("~/Scripts/enviosSalientes-table.js")"></script>
 
     <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
@@ -18,6 +26,23 @@
     <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
 }
 <div class="container-fluid">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body…</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Confirmar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
     <!-- Page Heading -->
     <div class="row">
         <div class="col-lg-12">
@@ -27,6 +52,7 @@
         </div>
     </div>
     <!-- /.row -->
+    <div id="modal-container" class="modal fade" tabindex="-1" role="dialog"></div>
     <div class="row">
         <div>
             <label>
@@ -43,6 +69,7 @@
                         <th>DescCLiente</th>
                         <th>FechaCarga</th>
                         <th>Observaciones</th>
+                        <th>Contactos</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

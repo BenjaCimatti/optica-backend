@@ -6,6 +6,9 @@
     <script src="@Url.Content("~/Scripts/jQuery.dataTables.min.js")"></script>
     <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
 
+    <script src="@Url.Content("~/Scripts/bootstrap-dialog.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/bootstrap-dialog.min.css")" rel="stylesheet" type="text/css" />
+
     <script src="@Url.Content("~/Scripts/clientesTransportistas-table.js")"></script>
 
     <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
@@ -17,30 +20,52 @@
     <script src="@Url.Content("~/Scripts/buttons.print.min.js")"></script>
     <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
 }
-<div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">
-                Clientes
-            </h1>
+    <div class="container-fluid">
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    Clientes
+                </h1>
+            </div>
+        </div>
+        <div class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>One fine body…</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- /.row -->
+        <div id="modal-container" class="modal fade" tabindex="-1" role="dialog"></div>
+        <div class="row">
+            <button type="button" class="btn btn-primary" onclick=SwitchTransportistas() id="SwitchTransportistas">Cambiar Transportistas</button>
+        </div>
+        <br />
+        <div class="row">
+            <div id="container">
+                <table id="clientesTransportistasDataTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>IdCliente</th>
+                            <th>DescCLiente</th>
+                            <th>IdTransportista</th>
+                            <th>DescTransportista</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <!-- /.row -->
-    <div class="row">
-        <div id="container">
-            <table id="clientesTransportistasDataTable" class="display">
-                <thead>
-                    <tr>
-                        <th>IdCliente</th>
-                        <th>DescCLiente</th>
-                        <th>IdTransportista</th>
-                        <th>DescTransportista</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-</div>
 <!-- /.container-fluid -->

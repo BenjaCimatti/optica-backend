@@ -50,5 +50,36 @@ namespace SistemaLogistica.Controllers
 					}
 		}
 
+		[HttpGet]
+		[Authorize]
+		[ActionName("Switch")]
+		[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1")] //Admin
+		[LogAction]
+		public Object Switch(int IdTransportistaOrigen, int IdTransportistaDestino)
+		{
+			var identity = User.Identity as ClaimsIdentity;
+			bool res;
+
+			DataAccess dal = new DataAccess();
+			try
+			{
+				res = dal.SwitchTransportista(IdTransportistaOrigen, IdTransportistaDestino);
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				throw new HttpResponseException(HttpStatusCode.InternalServerError);
+			}
+
+			if (res)
+			{
+				return res;
+			}
+			else
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.NoContent.ToString());
+				throw new HttpResponseException(HttpStatusCode.NoContent);
+			}
+		}
 	}
 }

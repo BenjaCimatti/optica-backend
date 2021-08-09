@@ -49,7 +49,14 @@ namespace SistemaLogistica.Web.Controllers
 								FormsAuthentication.SetAuthCookie(_UsuarioSessionData.Usuario, false);
 
 								Session["UsuarioSessionData"] = _UsuarioSessionData;
-								return RedirectToAction("Pendientes", "Envios");
+								if (_UsuarioSessionData.IdRol == 1) //Admin
+								{
+									return RedirectToAction("Pendientes", "Envios");
+								}
+								else //Clientes y Transportistas
+								{
+									return RedirectToAction("Consultas", "Envios");
+								}
 							}
 							else
 							{

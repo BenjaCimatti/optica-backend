@@ -18,8 +18,11 @@ namespace WebLogistica.Web.Filters
 			UsuarioSessionData UsuarioSessionData = (UsuarioSessionData)httpContext.Session["UsuarioSessionData"];
 			foreach(int i in allowedroles)
 			{
-				if (i == UsuarioSessionData.IdRol)
+				if (UsuarioSessionData != null)
+				{
+					if (i == UsuarioSessionData.IdRol)
 					{ authorize = true; }
+				}
 			}
 			return authorize;
 		}

@@ -18,9 +18,12 @@
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
-select,
+select {
+    max-width: 360px;
+}
+
 textarea {
-    max-width: 280px;
+    max-width: 480px;
 }
 
 .modal-content {
@@ -32,7 +35,55 @@ textarea {
     cursor: default;
     height: 300px;
     width: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
     z-index: 0;
 }
+
+table {
+    border-collapse: separate;
+    border-spacing: 10px 0;
+}
+
+td {
+    padding: 10px 0;
+}
+
+table.tabaContactos {
+    border: 1px solid #000000;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+    table.tabaContactos td, table.tabaContactos th {
+        border: 1px solid #000000;
+        padding: 2px 3px;
+    }
+
+    table.tabaContactos tbody td {
+        font-size: 11px;
+    }
+
+    table.tabaContactos tr:nth-child(even) {
+        background: #D0E4F5;
+    }
+
+    table.tabaContactos thead {
+        background: #0B6FA4;
+    }
+
+        table.tabaContactos thead th {
+            font-size: 13px;
+            font-weight: bold;
+            color: #FFFFFF;
+            text-align: center;
+            border-left: 1px solid #000000;
+        }
+
+            table.tabaContactos thead th:first-child {
+                border-left: none;
+            }
+
+    table.tabaContactos tfoot td {
+        font-size: 14px;
+    }

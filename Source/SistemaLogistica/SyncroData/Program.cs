@@ -12,9 +12,17 @@ namespace SyncroData
 	{
 		static void Main(string[] args)
 		{
+			bool res = false;
+		
 			CustomLogging.Initialize();
 			DataAccess dal = new DataAccess();
-			bool res = dal.SyncroTransportistas();
+
+			if (args.Length > 0 && args[0].ToString().ToUpper() == "REFRESH")
+			{
+				res = dal.RestartDataClienteTransportistaRel();
+			}
+
+			res = dal.SyncroTransportistas();
 			res = dal.SyncroClientes();
 			res = dal.SyncroRelTransportistaClientes();
 		}

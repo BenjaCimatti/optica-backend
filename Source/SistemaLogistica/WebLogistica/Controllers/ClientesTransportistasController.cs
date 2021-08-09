@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using WebLogistica.Data;
 using static WebLogistica.Data.ApiAccess;
 using WebLogistica.Domain;
+using WebLogistica.Models;
 
 namespace WebLogistica.Web.Controllers
 {
@@ -122,15 +123,84 @@ namespace WebLogistica.Web.Controllers
 				}
       }
 
-			private string IdxOrderIntString(string Id)
-			{
-				char[] ChrArray = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k' };
-				string Out = "";
-				foreach(char c in Id)
+			[CustomAuthorize(1)] //Admin
+			public ActionResult SwitchView()
 				{
-					Out = Out + ChrArray[int.Parse(c.ToString())];
+					TempData["TransportistaOrigenDDLId"] = new SelectList(ObtenerTransportistasOrigenDDLId(), "Value", "Text");
+					TempData["TransportistaDestinoDDLId"] = new SelectList(ObtenerTransportistasDestinoDDLId(), "Value", "Text");
+
+					return PartialView("~/Views/ClientesTransportistas/_SwitchTransportistaPartial.cshtml");
 				}
-				return Out.PadLeft(10,'a');
+
+			private List<SelectListItem> ObtenerTransportistasOrigenDDLId()
+			{
+				if (Session["TransportistaOrigenDDLId"] != null)
+				{
+					return (List<SelectListItem>)Session["TransportistaOrigenDDLId"];
+				}
+				else
+				{
+					List<SelectListItem> OutTransportistas = new List<SelectListItem>();
+					ApiAccess Api = new ApiAccess();
+
+					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+					var TransportistasApi = Api.GetTransportistas(Usd.Token);
+
+					foreach (Transportista tr in TransportistasApi)
+					{
+						OutTransportistas.Add(new SelectListItem() { Text = tr.DescTransportista, Value = tr.IdTransportista.ToString() });
+					}
+					Session["TransportistaOrigenDDLId"] = OutTransportistas;
+					return OutTransportistas;
+				}
 			}
-    }
+
+			private List<SelectListItem> ObtenerTransportistasDestinoDDLId()
+			{
+				if (Session["TransportistaDestinoDDLId"] != null)
+				{
+					return (List<SelectListItem>)Session["TransportistaDestinoDDLId"];
+				}
+				else
+				{
+					List<SelectListItem> OutTransportistas = new List<SelectListItem>();
+					ApiAccess Api = new ApiAccess();
+
+					UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+					var TransportistasApi = Api.GetTransportistas(Usd.Token);
+
+					foreach (Transportista tr in TransportistasApi)
+					{
+						OutTransportistas.Add(new SelectListItem() { Text = tr.DescTransportista, Value = tr.IdTransportista.ToString() });
+					}
+					Session["TransportistaDestinoDDLId"] = OutTransportistas;
+					return OutTransportistas;
+				}
+			}
+
+			[HttpPost]
+			[CustomAuthorize(1)] //Admin
+			public ActionResult Switch(SwitchTransportista Switch)
+			{
+				ApiAccess Api = new ApiAccess();
+
+				UsuarioSessionData Usd = (UsuarioSessionData)Session["UsuarioSessionData"];
+				Api.SwitchTransportistas(Usd.Token, Switch.IdTransportistaOrigen, Switch.IdTransportistaDestino);
+
+				ModelState.Clear();
+				Session.Remove("ClientesTransportistsListData");
+				return RedirectToAction("Listado", "ClientesTransportistas");
+			}
+
+			private string IdxOrderIntString(string Id)
+					{
+						char[] ChrArray = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k' };
+						string Out = "";
+						foreach(char c in Id)
+						{
+							Out = Out + ChrArray[int.Parse(c.ToString())];
+						}
+						return Out.PadLeft(10,'a');
+					}
+			}
 }

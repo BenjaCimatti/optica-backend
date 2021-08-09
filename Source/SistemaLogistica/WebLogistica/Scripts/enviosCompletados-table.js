@@ -41,7 +41,7 @@
         ],
         "aoColumns": [
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "IdEnvio",
                 "sTitle": "Acciones",
                 "bSearchable": false,
@@ -52,40 +52,42 @@
                 }
             },
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "DescEnvio",
                 "sTitle": "Envio",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
+                "sClass": "text-left",
                 "sName": "DescCLiente",
                 "sTitle": "Cliente",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
+                "sClass": "text-left",
                 "sName": "DescTransportista",
                 "sTitle": "Transportista",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "FechaCarga",
                 "sTitle": "Carga",
                 "bSortable": true,
                 "bSearchable": false,
             },
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "FechaEnvio",
                 "sTitle": "Carga",
                 "bSortable": true,
                 "bSearchable": false,
             },
             {
-                "sClass": "center",
+                "sClass": "text-left",
                 "sName": "Observaciones",
                 "sTitle": "Observaciones",
                 "bSortable": false,

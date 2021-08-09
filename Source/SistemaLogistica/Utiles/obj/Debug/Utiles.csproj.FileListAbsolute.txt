@@ -7,3 +7,12 @@ C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\U
 C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.dll
 C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.pdb
 C:\Desarrollo\Desarrollos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.csprojAssemblyReference.cache
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\bin\Debug\Utiles.dll
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\bin\Debug\Utiles.pdb
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\bin\Debug\log4net.dll
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\bin\Debug\log4net.xml
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.csproj.CoreCompileInputs.cache
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.csproj.CopyComplete
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.dll
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.pdb
+C:\Desarrollo\Desarrollos\Externos\OpticaElena\Source\SistemaLogistica\Utiles\obj\Debug\Utiles.csprojAssemblyReference.cache

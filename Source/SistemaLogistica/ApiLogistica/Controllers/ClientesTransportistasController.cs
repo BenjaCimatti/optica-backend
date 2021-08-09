@@ -44,5 +44,42 @@ namespace ApiLogistica.Controllers
 					throw new HttpResponseException(HttpStatusCode.NoContent);
 				}
 			}
-		}
+
+			[HttpGet]
+			[Authorize]
+			[ActionName("SwitchTransportistas")]
+			[CustomAuthorizationAttribute(ClaimType = "IdRol", ClaimValues = "1")] //Admin
+			[LogAction]
+			public Object SwitchTransportistas(int IdTransportistaOrigen, int IdTransportistaDestino)
+		{
+				if (!ModelState.IsValid)
+				{
+					CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.BadRequest.ToString() + " - " + ModelState);
+					throw new HttpResponseException(HttpStatusCode.BadRequest);
+				}
+
+				bool res;
+
+				DataAccess dal = new DataAccess();
+				try
+				{
+					res = dal.SwitchTransportista(IdTransportistaOrigen, IdTransportistaDestino);
+				}
+				catch (Exception ex)
+				{
+					CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+					throw new HttpResponseException(HttpStatusCode.InternalServerError);
+				}
+
+				if (res)
+				{
+					return Json(new { status = "OK" });
+				}
+				else
+				{
+					CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + HttpStatusCode.NoContent.ToString());
+					throw new HttpResponseException(HttpStatusCode.NoContent);
+				}
+			}
+	}
 }

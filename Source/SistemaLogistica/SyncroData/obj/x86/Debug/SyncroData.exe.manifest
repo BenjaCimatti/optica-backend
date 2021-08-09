@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="33792">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="48128">
       <assemblyIdentity name="LogisticaDataAccess" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>fFrme1WlMFv+FyD0UNxCEnA+HNVwCtjsAwR4w1uIdBQ=</dsig:DigestValue>
+        <dsig:DigestValue>5xgfzsVWurqgjJ/NuVHdIrAj+7YdesM6wQwWe7X8rFA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -73,7 +73,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>Zsuy3kYhIAoRwPGh184NQAv+9bFE7meh9fE9X95FyXw=</dsig:DigestValue>
+        <dsig:DigestValue>+FSXyCGKYKXn30FcPr1jtSrQHFhJunr0FyI+sVfD9nc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -97,7 +97,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>eC3/oGswuk3EZ2l37xw2ouSa8Yl/plMACVtf+5M2bFY=</dsig:DigestValue>
+        <dsig:DigestValue>yqNOjbqZK+3eYaB44KU+PlaCn4dw7GU5q39S8UInm28=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

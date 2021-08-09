@@ -12,6 +12,13 @@ using WebLogistica.Web.Models;
 
 namespace WebLogistica.Data
 {
+	public class Estadisticas
+	{
+		public int Estadistica1 { get; set; }
+		public int Estadistica2 { get; set; }
+		public int Estadistica3 { get; set; }
+	}
+
 	public class ApiAccess
 	{
 		public class Token
@@ -39,6 +46,7 @@ namespace WebLogistica.Data
 			public double? GeoLatitud { get; set; }
 			public double? GeoLongitud { get; set; }
 			public string Observaciones { get; set; }
+			public int Contactos { get; set; }
 		}
 
 		public class NuevoEnvio
@@ -46,6 +54,29 @@ namespace WebLogistica.Data
 			public int IdCliente { get; set; }
 			public int IdTransportista { get; set; }
 			public string Observaciones { get; set; }
+		}
+
+		public class Contacto
+		{
+			public int IdEnvio { get; set; }
+			public int IdTransportista { get; set; }
+			public string DescTransportista { get; set; }
+			public DateTime FechaContacto { get; set; }
+			public double GeoLatitud { get; set; }
+			public double GeoLongitud { get; set; }
+			public string Observaciones { get; set; }
+		}
+
+		public class InfoEnvio
+		{
+			public Envio _Envio { get; set; }
+			public List<Contacto> _Contactos { get; set; }
+		}
+
+		public class EnvioCompletado
+		{
+			public Envio _Envio { get; set; }
+			public List<Contacto> _Contactos { get; set; }
 		}
 
 		public class ClienteTransportista
@@ -83,7 +114,7 @@ namespace WebLogistica.Data
 					}
 					else
 					{
-						return null;
+						return new List<Envio>();
 					}
 				}
 			}
@@ -94,15 +125,59 @@ namespace WebLogistica.Data
 			}
 		}
 
-		public Envio GetDetalleEnvio(string Token, int IdEnvio)
+		public InfoEnvio GetDetalleEnvio(string Token, int IdEnvio)
 		{
 			Token = SyncroToken(Token);
 
 			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
 
-			var request = new RestRequest("/api/Envios/Get", Method.GET);
+			InfoEnvio _InfoEnvio = new InfoEnvio();
+
+			var requestEnvio = new RestRequest("/api/Envios/Get", Method.GET);
+			requestEnvio.AddHeader("Authorization", "Bearer " + Token);
+			requestEnvio.AddParameter("IdEnvio", IdEnvio);
+
+			var requestContactos = new RestRequest("/api/Envios/Contactos", Method.GET);
+			requestContactos.AddHeader("Authorization", "Bearer " + Token);
+			requestContactos.AddParameter("IdEnvio", IdEnvio);
+
+			try
+			{
+				var responseEnvio = client.Get(requestEnvio);
+
+				if (responseEnvio.StatusCode == HttpStatusCode.OK)
+				{
+					_InfoEnvio._Envio = JsonConvert.DeserializeObject<Envio>(responseEnvio.Content.ToString());
+				}
+
+				if (_InfoEnvio._Envio.Contactos > 0)
+				{
+					var responseContactos = client.Get(requestContactos);
+
+					if (responseContactos.StatusCode == HttpStatusCode.OK)
+					{
+						_InfoEnvio._Contactos = JsonConvert.DeserializeObject<List<Contacto>>(responseContactos.Content.ToString());
+					}
+				}
+
+				return _InfoEnvio;
+
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return null;
+			}
+		}
+
+		public Estadisticas GetEstadisticas(string Token)
+		{
+			Token = SyncroToken(Token);
+
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Envios/Estadisticas", Method.GET);
 			request.AddHeader("Authorization", "Bearer " + Token);
-			request.AddParameter("IdEnvio", IdEnvio);
 
 			try
 			{
@@ -110,12 +185,12 @@ namespace WebLogistica.Data
 				{
 					if (response.StatusCode == HttpStatusCode.OK)
 					{
-						Envio Envio = JsonConvert.DeserializeObject<Envio>(response.Content.ToString());
-						return Envio;
+						Estadisticas _Estadisticas = JsonConvert.DeserializeObject<Estadisticas>(response.Content.ToString());
+						return _Estadisticas;
 					}
 					else
 					{
-						return null;
+						return new Estadisticas { Estadistica1 = 0, Estadistica2 = 0, Estadistica3 = 0 };
 					}
 				}
 			}
@@ -146,7 +221,7 @@ namespace WebLogistica.Data
 					}
 					else
 					{
-						return null;
+						return new List<ClienteTransportista>();
 					}
 				}
 			}
@@ -177,7 +252,7 @@ namespace WebLogistica.Data
 					}
 					else
 					{
-						return null;
+						return new List<Transportista>();
 					}
 				}
 			}
@@ -217,12 +292,106 @@ namespace WebLogistica.Data
 			}
 		}
 
+		public bool EnviarEnviosDisponibles(string Token, List<long> Le)
+		{
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Envios/Enviar", Method.POST);
+			// Json to post.
+			string jsonToSend = JsonConvert.SerializeObject(Le);
+
+			request.AddParameter("application/json; charset=utf-8", jsonToSend, ParameterType.RequestBody);
+			request.RequestFormat = DataFormat.Json;
+
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			try
+			{
+				var response = client.Post(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return false;
+			}
+		}
+
 		public bool EliminarEnvioDisponible(string Token, int IdEnvio)
 		{
 			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
 
 			var request = new RestRequest("/api/Envios/EliminarDisponible", Method.GET);
 			request.AddParameter("IdEnvio", IdEnvio.ToString());
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			try
+			{
+				var response = client.Get(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return false;
+			}
+		}
+
+		public bool SwitchTransportistas(string Token, int IdTransportistaOrigen, int IdTransportistaDestino)
+		{
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/ClientesTransportistas/SwitchTransportistas", Method.GET);
+			request.AddParameter("IdTransportistaOrigen", IdTransportistaOrigen.ToString());
+			request.AddParameter("IdTransportistaDestino", IdTransportistaDestino.ToString());
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			try
+			{
+				var response = client.Get(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return false;
+			}
+		}
+
+		public bool EditarEnvio(string Token, int IdEnvio, string Observaciones)
+		{
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Envios/Editar", Method.GET);
+			request.AddParameter("IdEnvio", IdEnvio.ToString());
+			request.AddParameter("Observaciones", Observaciones);
 			request.AddHeader("Authorization", "Bearer " + Token);
 
 			try

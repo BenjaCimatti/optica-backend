@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    var rows_selected = [];
     var oTable = $('#enviosPendientesDataTable').dataTable({
         "scrollY": 400,
         "order": [[2, "asc"]],
@@ -36,11 +37,12 @@
             { "sWidth": "20%", "aTargets": 2 },
             { "sWidth": "20%", "aTargets": 3 },
             { "sWidth": "13%", "aTargets": 4 },
-            { "sWidth": "25%", "aTargets": 5 },
+            { "sWidth": "20%", "aTargets": 5 },
+            { "sWidth": "5%", "aTargets": 6 }
         ],
         "aoColumns": [
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "IdEnvio",
                 "sTitle": "Acciones",
                 "bSearchable": false,
@@ -51,37 +53,49 @@
                 }
             },
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "DescEnvio",
                 "sTitle": "Envio",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
+                "sClass": "text-left",
                 "sName": "DescCLiente",
                 "sTitle": "Cliente",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
+                "sClass": "text-left",
                 "sName": "DescTransportista",
                 "sTitle": "Transportista",
                 "bSortable": true,
                 "bSearchable": true,
             },
             {
-                "sClass": "center",
+                "sClass": "text-center",
                 "sName": "FechaCarga",
                 "sTitle": "Carga",
                 "bSortable": true,
                 "bSearchable": false,
             },
             {
-                "sClass": "center",
+                "sClass": "text-left",
                 "sName": "Observaciones",
                 "sTitle": "Observaciones",
                 "bSortable": false,
                 "bSearchable": true,
+            },
+            {
+                "sClass": "text-center",
+                "sName": "Enviar",
+                "sTitle": "Enviar",
+                "bSortable": false,
+                "bSearchable": false,
+                "mRender": function (data, type, full, meta) {
+                    return '<input type="checkbox" name="id[' + $('<div/>').text(data).html() + ']" value="' + $('<div/>').text(data).html() + '">';
+                }
             }
         ],
         "dom": 'Blfrtip',
@@ -130,33 +144,87 @@
             .end();
     })
 
-    $('#nuevoEnvio').on('show.bs.modal', function () {
-        var url = "/Envios/GetTransportistaFromCliente";
-        $.post(url, { ID: $('#ddlClientes').val() }, function (res) {
-            if (res.data == "Success") {
-                $("#DescTransportista").val(res.transportista);
-            }
-        });
-    });
+    $('#liberarEnvios').on('click', function (e) {
+        e.preventDefault();
 
-    $('#ddlClientes').on('change', function () {
-        var url = "/Envios/GetTransportistaFromCliente";
-        $.post(url, { ID: $('#ddlClientes').val() }, function (res) {
-            if (res.data == "Success") {
-                $("#DescTransportista").val(res.transportista);
-            }
-        });
-    });
+        var data = JSON.stringify(oTable.$('input[type="checkbox"]').serializeArray());
+
+        if (data != "[]") {
+
+            $.ajax({
+                contentType: "application/json",
+                type: 'POST',
+                url: '/Envios/Liberar',
+                data: data,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8'
+            }).done(function (response) {
+                if (response == "Liberados") {
+                    BootstrapDialog.show({
+                        title: 'Confirmación',
+                        message: "Envios Liberados!!",
+                        buttons: [{
+                            label: 'Cerrar',
+                            action: function (dialogItself) {
+                                dialogItself.close();
+                            }
+                        }]
+                    });
+                    var table = $('#enviosPendientesDataTable').DataTable();
+                    table.ajax.reload();
+                }
+                else {
+                    if (response == "NoData") {
+                        BootstrapDialog.show({
+                            title: 'Seleccion',
+                            message: "Debe seleccionar envios...!!",
+                            buttons: [{
+                                label: 'Cerrar',
+                                action: function (dialogItself) {
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+                    }
+                    else {
+                        BootstrapDialog.show({
+                            title: "Error del Sistema",
+                            message: "Contacte a un Administrador!!",
+                            buttons: [{
+                                label: 'Cerrar',
+                                action: function (dialogItself) {
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            BootstrapDialog.show({
+                title: 'Seleccion',
+                message: "Debe seleccionar envios...!!",
+                buttons: [{
+                    label: 'Cerrar',
+                    action: function (dialogItself) {
+                        dialogItself.close();
+                    }
+                }]
+            });
+        }
+
+    })
 });
 
-//function EditEnvio(IdEnvio) {
-//    var url = "/Envios/Edit";
-//    var id = IdEnvio;
-//    $.get(url + '/' + id, function (data) {
-//        $('#modal-content').html(data);
-//        $('#modal-container').modal('show');
-//    });
-//}
+function EditEnvio(IdEnvio) {
+    var url = "/Envios/EditarView";
+    var id = IdEnvio;
+    $.get(url + '/' + id, function (data) {
+        $('#modal-container').html(data);
+        $('#modal-container').modal('show');
+    });
+}
 
 function DeleteEnvio(IdEnvio) {
     var dialog = BootstrapDialog.confirm({
@@ -205,4 +273,10 @@ function Delete(IdEnvio) {
             });
         }
     });
+}
+
+function NuevoEnvio() {
+    var url = "/Envios/NuevoEnvioView";
+    $('#modal-container').load(url);
+    $('#modal-container').modal('show');
 }

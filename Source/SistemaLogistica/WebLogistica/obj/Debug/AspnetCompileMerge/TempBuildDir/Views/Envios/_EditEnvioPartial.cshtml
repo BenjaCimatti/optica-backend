@@ -1,27 +1,26 @@
 ﻿@model WebLogistica.Models.EnvioEdit
-<div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="ModalLabel">Editar Envio</h3>
-</div>
-<div>
-    @using (Ajax.BeginForm("Edit", "Envios", FormMethod.Post,
-                        new AjaxOptions
-                        {
-                            InsertionMode = InsertionMode.Replace,
-                            HttpMethod = "POST",
-                            UpdateTargetId = "envioUpdate"
-                        }))
-    {
-        @Html.ValidationSummary()
-        @Html.AntiForgeryToken()
-        <div class="modal-body">
-            <label>Envio: @Html.TextAreaFor(m => m.IdEnvio, new { @readonly = "readonly" })</label>
-            @Html.TextAreaFor(m => m.Observaciones, new { rows = 10, cols = 50 })
+@using (Html.BeginForm("Editar", "Envios", FormMethod.Post))
+{
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">Editar Envio @Model.IdEnvio</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                        @Html.TextAreaFor(m => m.IdEnvio, new { style = "display: none;" })
+                    <label>
+                        @Html.TextAreaFor(m => m.Observaciones, new { @class = "form-control", rows = 10, cols = 50 })
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Grabar</button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-inverse" type="submit">Grabar</button>
-        </div>
-    }
-</div>
-
-
+    </div>
+}

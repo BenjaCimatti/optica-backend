@@ -1,0 +1,117 @@
+﻿@model WebLogistica.Models.EnvioContactosOut
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">Detalle de Envio Saliente</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0" bordercolor="#ffffff">
+                        <tr>
+                            <td width="60%">
+                                <div class="row">
+                                    <strong>Envio: </strong> @Html.DisplayFor(m => m.IdEnvio, new { @readonly = "readonly" })
+                                </div>
+                                <div class="row">
+                                    <strong>Cliente: </strong> @Html.DisplayFor(m => m.DescCliente, new { @readonly = "readonly" })
+                                </div>
+                                <div class="row">
+                                    <strong>Transportista: </strong> @Html.DisplayFor(m => m.DescTransportista, new { @readonly = "readonly" })
+                                </div>
+                                <div class="row">
+                                    <strong>Fecha Carga: </strong> @Html.DisplayFor(m => m.FechaCarga, new { @readonly = "readonly" })
+                                </div>
+                                <div class="row">
+                                    <strong>Fecha Envio: </strong> @Html.DisplayFor(m => m.FechaEnvio, new { @readonly = "readonly" })
+                                </div>
+                                @if (@Model.Observaciones != "")
+                                {
+                                    <div class="row">
+                                        <strong>Observaciones: </strong> @Html.DisplayFor(m => m.Observaciones, new { @readonly = "readonly" })
+                                    </div>
+                                }
+                            </td>
+                            <td width="40%" valign="top">
+                                @if (@Model.CantContactos > 0)
+                                {
+                                    <table id="myTable" class="tabaContactos">
+                                        <thead>
+                                            <tr>
+                                                <th> Contacto </th>
+                                                <th> Observación </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (WebLogistica.Models.Contacto cto in Model.Contactos)
+                                            {
+                                                <tr>
+                                                    <td> @cto.FechaContacto </td>
+                                                    <td> @cto.Observaciones </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <br />
+                <div class="row">
+                    <div id="map" class="map"></div>
+                    <script type="text/javascript">
+                        function sleep(time) {
+                            return new Promise((resolve) => setTimeout(resolve, time));
+                        }
+                        sleep(500).then(() => {
+                            var redrawint = Math.floor(Math.random() * 200000) + 1
+                            var getRedrawInteger = function () {
+                                return redrawint;
+                            };
+                            var incrementRedrawInteger = function () {
+                                redrawint += 1;
+                            };
+                            // Initialize the map
+                            var map = L.map('map');
+                            // Get the tile layer from OpenStreetMaps
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png?{randint}', {
+                                randint: getRedrawInteger,
+                                // Specify the maximum zoom of the map
+                                maxZoom: 19,
+                                // Set the attribution for OpenStreetMaps
+                                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+
+                            new Promise(r => setTimeout(r, 2000));
+
+                            var locations = [
+                                @foreach (WebLogistica.Models.Contacto cto in Model.Contactos) {
+                                    @:['@cto.FechaContacto - @cto.DescTransportista - @cto.Observaciones',@cto.GeoLatitud,@cto.GeoLongitud],
+                                }
+                            ];
+
+                            // Set the view of the map
+                            // with the latitude, longitude and the zoom value
+                            map.setView([locations[0][1], locations[0][2]], 15);
+
+                            for (var i = 0; i < locations.length; i++) {
+                                marker = new L.marker([locations[i][1], locations[i][2]])
+                                    .bindPopup(locations[i][0])
+                                    .addTo(map);
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+</div>
+
