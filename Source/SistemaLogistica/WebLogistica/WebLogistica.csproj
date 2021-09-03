@@ -156,10 +156,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ClientesTransportistasController.cs" />
+    <Compile Include="Controllers\RetornosController.cs" />
     <Compile Include="Controllers\EnviosController.cs" />
     <Compile Include="Controllers\NavbarController.cs" />
     <Compile Include="Domain\ClientesTransportistasTable.cs" />
     <Compile Include="Domain\EnvioCompletadoTable.cs" />
+    <Compile Include="Domain\RetornosTable.cs" />
     <Compile Include="Models\EnvioContactosOut.cs" />
     <Compile Include="Models\EnviosHomeData.cs" />
     <Compile Include="Models\SwitchTransportista.cs" />
@@ -269,9 +271,10 @@
     <Content Include="Scripts\clientesTransportistas-table.js" />
     <Content Include="Scripts\dataTables.buttons.min.js" />
     <Content Include="Scripts\enviosCompletados-table.js" />
+    <Content Include="Scripts\enviosPendientes-table.js" />
     <Content Include="Scripts\enviosSalientes-table.js" />
     <Content Include="Scripts\enviosConsultas-table.js" />
-    <Content Include="Scripts\enviosPendientes-table.js" />
+    <Content Include="Scripts\retornosGestionar-table.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -317,6 +320,7 @@
     <Content Include="Views\ClientesTransportistas\_SwitchTransportistaPartial.cshtml" />
     <Content Include="Views\Envios\_NuevoEnvioPartial.cshtml" />
     <Content Include="Views\Envios\Consultas.cshtml" />
+    <Content Include="Views\Retornos\Gestionar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

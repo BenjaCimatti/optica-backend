@@ -125,6 +125,37 @@ namespace WebLogistica.Data
 			}
 		}
 
+		public IList<Envio> GetRetornos(string Token)
+		{
+			Token = SyncroToken(Token);
+
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Retornos/Get", Method.GET);
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			try
+			{
+				var response = client.Get(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						List<Envio> Envios = JsonConvert.DeserializeObject<List<Envio>>(response.Content.ToString());
+						return Envios;
+					}
+					else
+					{
+						return new List<Envio>();
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return null;
+			}
+		}
+
 		public InfoEnvio GetDetalleEnvio(string Token, int IdEnvio)
 		{
 			Token = SyncroToken(Token);
@@ -297,6 +328,40 @@ namespace WebLogistica.Data
 			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
 
 			var request = new RestRequest("/api/Envios/Enviar", Method.POST);
+			// Json to post.
+			string jsonToSend = JsonConvert.SerializeObject(Le);
+
+			request.AddParameter("application/json; charset=utf-8", jsonToSend, ParameterType.RequestBody);
+			request.RequestFormat = DataFormat.Json;
+
+			request.AddHeader("Authorization", "Bearer " + Token);
+
+			try
+			{
+				var response = client.Post(request);
+				{
+					if (response.StatusCode == HttpStatusCode.OK)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, MethodBase.GetCurrentMethod().Name + " - " + ex.StackTrace);
+				return false;
+			}
+		}
+
+		public bool RecibirRetornos(string Token, List<long> Le)
+		{
+			var client = new RestClient(ConfigurationManager.AppSettings["ApiBase"]);
+
+			var request = new RestRequest("/api/Retornos/Recibir", Method.POST);
 			// Json to post.
 			string jsonToSend = JsonConvert.SerializeObject(Le);
 

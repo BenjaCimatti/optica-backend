@@ -1,0 +1,68 @@
+﻿@model WebLogistica.Models.EnviosHomeData
+@{
+    ViewBag.Title = "Envios Pendientes";
+}
+@section retornosGestionarDataTable
+{
+    <script src="@Url.Content("~/Scripts/jquery.dataTables.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/bootstrap-dialog.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/bootstrap-dialog.min.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/retornosGestionar-table.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/dataTables.buttons.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/pdfmake.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/vfs_fonts.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.html5.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/buttons.print.min.js")"></script>
+    <link href="@Url.Content("~/Scripts/buttons.jqueryui.min.css")" rel="stylesheet" type="text/css" />
+}
+    <div class="container-fluid">
+        <div class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>One fine body…</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div class="row">
+            <div id="container">
+                <table>
+                    <tr align='left'>
+                        <td>
+                            <button type="button" class="btn btn-primary" id="recibirDevoluciones">Recibir Devoluciones</button>
+                        </td>
+                    </tr>
+                </table>
+                <h2>Devoluciones</h2>
+                <table id="retornosGestionarDataTable" class="display">
+                    <thead>
+                        <tr>
+                            <th>IdEnvio</th>
+                            <th>DescCLiente</th>
+                            <th>DescTransportista</th>
+                            <th>FechaEnvio</th>
+                            <th>Recibido</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<!-- /.container-fluid -->

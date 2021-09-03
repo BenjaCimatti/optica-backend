@@ -191,11 +191,14 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\ClientesController.cs" />
     <Compile Include="Controllers\ClientesTransportistasController.cs" />
+    <Compile Include="Controllers\RetornosController.cs" />
     <Compile Include="Controllers\TransportistasController.cs" />
     <Compile Include="Controllers\EnviosController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Controllers\VersionController.cs" />
+    <Compile Include="Dominios\RetornosDominio.cs" />
     <Compile Include="Dominios\EnviosDominio.cs" />
     <Compile Include="Dominios\TokenDominio.cs" />
     <Compile Include="Filters\CustomAuthorizationAttribute .cs" />

@@ -26,6 +26,14 @@ namespace com.Sistema.Logistica
 
 		private string SQLiteDateTimeFormat = System.Configuration.ConfigurationManager.AppSettings["SQLiteDateTimeFormat"];
 
+		public class NuevoRetorno
+		{
+			public int IdCliente { get; set; }
+			public int IdTransportista { get; set; }
+			public double? GeoLatitud { get; set; }
+			public double? GeoLongitud { get; set; }
+		}
+
 		public class Estadisticas
 		{
 			public int Estadistica1 { get; set; }
@@ -237,6 +245,42 @@ namespace com.Sistema.Logistica
 			}
 		}
 
+		public bool RecibirRetornos(List<long> Le)
+		{
+			SQLiteConnection sqlite_con = new SQLiteConnection(dbConnectionStringNoRO);
+			sqlite_con.Open();
+			string query = "";
+			SQLiteCommand sqlite_cmd = new SQLiteCommand();
+
+			string strEnvios = "";
+			foreach (long l in Le)
+			{
+				strEnvios = strEnvios + l.ToString() + ",";
+			}
+			strEnvios = strEnvios.Remove(strEnvios.Length - 1);
+
+			try
+			{
+				query = "UPDATE envios SET idEstado = @ESTADOCOMPLETADO, fechaCierre = JULIANDAY('now','localtime') WHERE idEnvio IN ({0});";
+				query = query.Replace("{0}", strEnvios);
+				sqlite_cmd = new SQLiteCommand(query, sqlite_con);
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADOCOMPLETADO", System.Configuration.ConfigurationManager.AppSettings["IdEstadoCompletado"]));
+
+				int Actualizados = sqlite_cmd.ExecuteNonQuery();
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.DEBUG, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters) + " - " + Actualizados + " Registros");
+				if (Actualizados > 0)
+				{ return true; }
+				else
+				{ return false; }
+			}
+			catch (SQLiteException ex)
+			{
+				CustomLogging.LogError(MethodBase.GetCurrentMethod(), ex);
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters));
+				throw ex;
+			}
+		}
+
 		public bool ConfirmarEnvio(ConfirmacionEnvio Ce)
 		{
 			SQLiteConnection sqlite_con = new SQLiteConnection(dbConnectionStringNoRO);
@@ -298,6 +342,37 @@ namespace com.Sistema.Logistica
 			}
 		}
 
+		public long IngresarRetorno(NuevoRetorno Nr)
+		{
+			SQLiteConnection sqlite_con = new SQLiteConnection(dbConnectionStringNoRO);
+			sqlite_con.Open();
+			string query = "";
+			SQLiteCommand sqlite_cmd = new SQLiteCommand();
+			long IdRetorno = -1;
+
+			try
+			{
+				query = "INSERT INTO envios (idEnvio, idCliente, idTransportista, idEstado, fechaEnvio, fechaCarga, idOrganization, idRecorrido) VALUES(NULL, @IDCLIENTE, @IDTRANSPORTISTA, @ESTADOENVIADO, JULIANDAY('now','localtime'), JULIANDAY('now','localtime'), @ORGANIZACION, @IDRECORRIDORETORNO); SELECT last_insert_rowid() AS ID FROM envios LIMIT 1;";
+				sqlite_cmd = new SQLiteCommand(query, sqlite_con);
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADOENVIADO", System.Configuration.ConfigurationManager.AppSettings["IdEstadoEnviado"]));
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDCLIENTE", Nr.IdCliente));
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDTRANSPORTISTA", Nr.IdTransportista));
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", System.Configuration.ConfigurationManager.AppSettings["IdOrganizacion"]));
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDORETORNO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoRetorno"]));
+				IdRetorno = (long)sqlite_cmd.ExecuteScalar();
+
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.DEBUG, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters) + " - " + IdRetorno + " IDRetorno");
+
+				return IdRetorno;
+			}
+			catch (SQLiteException ex)
+			{
+				CustomLogging.LogError(MethodBase.GetCurrentMethod(), ex);
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters));
+				throw ex;
+			}
+		}
+
 		public bool IngresarEnvio(NuevoEnvio Ne)
 		{
 			SQLiteConnection sqlite_con = new SQLiteConnection(dbConnectionStringNoRO);
@@ -306,13 +381,14 @@ namespace com.Sistema.Logistica
 			SQLiteCommand sqlite_cmd = new SQLiteCommand();
 			try
 			{
-				query = "INSERT INTO envios (idEnvio, idCliente, idTransportista, idEstado, fechaCarga, observaciones, idOrganization) VALUES(NULL, @IDCLIENTE, @IDTRANSPORTISTA, @ESTADOINGRESADO, JULIANDAY('now','localtime'), @OBSERVACIONES, @ORGANIZACION);";
+				query = "INSERT INTO envios (idEnvio, idCliente, idTransportista, idEstado, fechaCarga, observaciones, idOrganization, idRecorrido) VALUES(NULL, @IDCLIENTE, @IDTRANSPORTISTA, @ESTADOINGRESADO, JULIANDAY('now','localtime'), @OBSERVACIONES, @ORGANIZACION, @IDRECORRIDOENVIO);";
 				sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 				sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADOINGRESADO", System.Configuration.ConfigurationManager.AppSettings["IdEstadoIngresado"]));
 				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDCLIENTE", Ne.IdCliente));
 				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDTRANSPORTISTA", Ne.IdTransportista));
 				sqlite_cmd.Parameters.Add(new SQLiteParameter("@OBSERVACIONES", Ne.Observaciones));
 				sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", System.Configuration.ConfigurationManager.AppSettings["IdOrganizacion"]));
+				sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 				int Actualizados = sqlite_cmd.ExecuteNonQuery();
 				CustomLogging.LogMessage(CustomLogging.TracingLevel.DEBUG, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters) + " - " + Actualizados + " Registros");
 				if (Actualizados > 0)
@@ -464,7 +540,7 @@ namespace com.Sistema.Logistica
 			}
 		}
 
-		public List<Envio> ObtenerEnvios(int? idTransportista, int? IdCliente, int? IdRol,int idOrganization, int Estado)
+		public List<Envio> ObtenerEnvios(int? idTransportista, int? IdCliente, int? IdRol,int idOrganization, int Estado, int idRecorrido)
 		{
 			SQLiteCommand sqlite_cmd = null;
 			List<Envio> Result = new List<Envio>();
@@ -478,24 +554,27 @@ namespace com.Sistema.Logistica
 				switch (IdRol)
 				{
 					case 1: //Admin
-						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est  WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO ORDER BY env.fechaCarga DESC;";
+						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est  WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idRecorrido = @IDRECORRIDOENVIO ORDER BY env.fechaCarga DESC;";
 						sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+						sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", idRecorrido));
 						break;
 					case 2: //Transportista
-						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idTransportista = @TRANSPORTISTA ORDER BY env.fechaCarga DESC;";
+						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idTransportista = @TRANSPORTISTA AND env.idRecorrido = @IDRECORRIDOENVIO ORDER BY env.fechaCarga DESC;";
 						sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@TRANSPORTISTA", idTransportista));
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+						sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", idRecorrido));
 						break;
 					default: //Cliente
-						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado >= @ESTADO AND env.idCliente = @CLIENTE ORDER BY env.fechaCarga DESC;";
+						query = "SELECT env.idEnvio,env.idCliente,env.idEstado,date(env.fechaCarga) as dateFechaCarga,time(env.fechaCarga) as timeFechaCarga,date(env.fechaEnvio) as dateFechaEnvio, time(env.fechaEnvio) as timeFechaEnvio,date(env.fechaCierre) as dateFechaCierre, time(env.fechaCierre) as timeFechaCierre,env.geoLatitud, env.geoLongitud,env.idTransportista,cli.descCliente,tra.descTransportista,cli.descCliente,est.descEstado,env.observaciones, (SELECT COUNT(cctos.idEnvio) FROM contactos_envios cctos WHERE cctos.idEnvio = env.idEnvio) as contactos FROM envios env, transportistas tra, clientes cli, estados est WHERE tra.idTransportista = env.idTransportista AND cli.idCliente = env.idCliente AND est.idEstado = env.idEstado AND env.idOrganization = @ORGANIZACION AND env.idEstado >= @ESTADO AND env.idCliente = @CLIENTE AND env.idRecorrido = @IDRECORRIDOENVIO ORDER BY env.fechaCarga DESC;";
 						sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@CLIENTE", IdCliente));
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 						sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+						sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", idRecorrido));
 						break;
 				}
 
@@ -584,27 +663,30 @@ namespace com.Sistema.Logistica
 						switch (IdRol)
 						{
 							case 1: //Admin
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime');";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							case 2: //Transportista
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idTransportista = @TRANSPORTISTA;";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idTransportista = @TRANSPORTISTA AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@TRANSPORTISTA", idTransportista));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							default: //Cliente
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idCliente = @CLIENTE;";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idCliente = @CLIENTE AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@CLIENTE", IdCliente));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 						}
 						break;
@@ -612,27 +694,30 @@ namespace com.Sistema.Logistica
 						switch (IdRol)
 						{
 							case 1: //Admin
-								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime');";
+								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							case 2: //Transportista
-								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idTransportista = @TRANSPORTISTA;";
+								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idTransportista = @TRANSPORTISTA  AND env.idRecorrido = @IDRECORRIDOENVIO;;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@TRANSPORTISTA", idTransportista));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							default: //Cliente
-								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idCliente = @CLIENTE;";
+								query = "SELECT CAST(AVG(env.fechaCierre - env.fechaEnvio) AS INTEGER) AS Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.fechaCarga > JULIANDAY('now','-{0} day','localtime') AND env.idCliente = @CLIENTE AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@CLIENTE", IdCliente));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 						}
 						break;
@@ -640,27 +725,30 @@ namespace com.Sistema.Logistica
 						switch (IdRol)
 						{
 							case 1: //Admin
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO;";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							case 2: //Transportista
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idTransportista = @TRANSPORTISTA;";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idTransportista = @TRANSPORTISTA AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@TRANSPORTISTA", idTransportista));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 							default: //Cliente
-								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idCliente = @CLIENTE;";
+								query = "SELECT COUNT(*) as Cantidad FROM envios env WHERE env.idOrganization = @ORGANIZACION AND env.idEstado = @ESTADO AND env.idCliente = @CLIENTE AND env.idRecorrido = @IDRECORRIDOENVIO;";
 								query = string.Format(query, Dias.ToString());
 								sqlite_cmd = new SQLiteCommand(query, sqlite_con);
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@CLIENTE", IdCliente));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ORGANIZACION", idOrganization));
 								sqlite_cmd.Parameters.Add(new SQLiteParameter("@ESTADO", Estado));
+								sqlite_cmd.Parameters.Add(new SQLiteParameter("@IDRECORRIDOENVIO", System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]));
 								break;
 						}
 						break;
@@ -1169,6 +1257,41 @@ namespace com.Sistema.Logistica
 						IdTransportista = Convert.ToInt32(dr["idTransportista"]),
 						DescCliente = dr["descCliente"].ToString(),
 						DescTransportista = dr["descTransportista"].ToString()
+					});
+				}
+				return Result;
+			}
+			catch (Exception ex)
+			{
+				CustomLogging.LogError(MethodBase.GetCurrentMethod(), ex);
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.ERROR, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters));
+				return Result;
+			}
+		}
+
+		public List<Cliente> ObtenerClientes()
+		{
+			SQLiteCommand sqlite_cmd = null;
+			List<Cliente> Result = new List<Cliente>();
+			try
+			{
+				SQLiteConnection sqlite_con = new SQLiteConnection(dbConnectionStringRO);
+				sqlite_con.Open();
+
+				string query = "";
+
+				query = "SELECT cli.idCliente, cli.descCliente FROM clientes cli ORDER BY cli.descCliente ASC;";
+				sqlite_cmd = new SQLiteCommand(query, sqlite_con);
+
+				SQLiteDataReader dr = sqlite_cmd.ExecuteReader();
+				CustomLogging.LogMessage(CustomLogging.TracingLevel.DEBUG, sqlite_cmd.CommandText + " - " + Parameters(sqlite_cmd.Parameters) + " - " + dr.HasRows + " Registros");
+
+				while (dr.Read())
+				{
+					Result.Add(new Cliente
+					{
+						IdCliente = Convert.ToInt32(dr["idCliente"]),
+						DescCliente = dr["descCliente"].ToString()
 					});
 				}
 				return Result;

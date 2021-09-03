@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="48128">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LogisticaDataAccess.dll" size="52736">
       <assemblyIdentity name="LogisticaDataAccess" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>5xgfzsVWurqgjJ/NuVHdIrAj+7YdesM6wQwWe7X8rFA=</dsig:DigestValue>
+        <dsig:DigestValue>5Eg7bUwvWeQuDaalXAFBZJyvlDYA9U//98RnP2BfX5U=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

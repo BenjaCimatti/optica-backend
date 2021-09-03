@@ -57,10 +57,12 @@ namespace SistemaLogistica.Controllers
 					else
 					{ _Estado = (int)Estado; }
 
+					int idRecorrido = int.Parse(System.Configuration.ConfigurationManager.AppSettings["IdRecorridoEnvio"]);
+
 					DataAccess dal = new DataAccess();
 					try
 					{
-						res = dal.ObtenerEnvios(IdTransportista, IdCliente, IdRol, IdOrganizacion, _Estado);
+						res = dal.ObtenerEnvios(IdTransportista, IdCliente, IdRol, IdOrganizacion, _Estado, idRecorrido);
 					}
 					catch(Exception ex)
 					{

@@ -21,7 +21,7 @@ namespace TestDataAccess
 		public void ObtenerEnviosAdmin()
 		{
 			DataAccess dal = new DataAccess();
-			List<Envio> res = dal.ObtenerEnvios(null, null, 1, 1, 1);
+			List<Envio> res = dal.ObtenerEnvios(null, null, 1, 1, 1,1);
 			Assert.AreNotEqual(res.Count, 0);
 		}
 
@@ -29,7 +29,7 @@ namespace TestDataAccess
 		public void ObtenerEnviosTransportista()
 		{
 			DataAccess dal = new DataAccess();
-			List<Envio> res = dal.ObtenerEnvios(2, null, 2, 1, 1);
+			List<Envio> res = dal.ObtenerEnvios(2, null, 2, 1, 1,1);
 			Assert.AreNotEqual(res.Count, 0);
 		}
 
@@ -37,7 +37,7 @@ namespace TestDataAccess
 		public void ObtenerEnviosClientes()
 		{
 			DataAccess dal = new DataAccess();
-			List<Envio> res = dal.ObtenerEnvios(null, 571, 3, 1, 1);
+			List<Envio> res = dal.ObtenerEnvios(null, 571, 3, 1, 1, 1);
 			Assert.AreNotEqual(res.Count, 0);
 		}
 
